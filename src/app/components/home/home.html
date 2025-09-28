@@ -1,0 +1,44 @@
+<section class="board">
+  <div class="controls">
+    <input [formControl]="searchControl" placeholder="Search issues…" />
+    <select [formControl]="filterControl">
+      <option value="all">All</option>
+      <option value="open">Open</option>
+      <option value="in-progress">In Progress</option>
+      <option value="done">Done</option>
+    </select>
+  </div>
+
+  <form [formGroup]="newForm" (ngSubmit)="addIssue()" class="add-form">
+    <input formControlName="title" placeholder="Title" />
+    <input formControlName="description" placeholder="Description" />
+    <select formControlName="status">
+      <option value="open">Open</option>
+      <option value="in-progress">In Progress</option>
+      <option value="done">Done</option>
+    </select>
+    <button type="submit" [disabled]="newForm.invalid">Add</button>
+  </form>
+
+  <div *ngIf="(loading$ | async)" class="loading">Loading…</div>
+  <div *ngIf="(error$ | async) as err" class="error">Error: {{ err }}</div>
+
+  <div class="list">
+    <div *ngFor="let issue of (issues$ | async)" class="card">
+      <header>
+        <h3>Title : {{ issue.title }}</h3>
+        <button (click)="deleteIssue(issue.id)">Delete</button>
+      </header>
+      <p>Description : {{ issue.description }}</p>
+      <footer>
+        <span>Status:</span>
+        <select [value]="issue.status" (change)="updateStatus(issue, $any($event.target).value)">
+          <option value="open">Open</option>
+          <option value="in-progress">In Progress</option>
+          <option value="done">Done</option>
+        </select>
+        <!-- <button (click)="updateTask(issue)">Update</button> -->
+      </footer>
+    </div>
+  </div>
+</section>
